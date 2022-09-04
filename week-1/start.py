@@ -94,12 +94,18 @@ for x in range(0, len(matrix[0])-1):
             column.append(matrix[y][x])
     matrix2.append(column)
 
+mostLikelyLetters = []
 
 for row in range (0,82):
     print(matrix2[row])
-    if(not (matrix2[row])):
-        ascii = matrix2[row].decode('ascii')
-        print('=> '+ascii)
+    if((matrix2[row])):
+        # ascii = matrix2[row].decode('ascii')
+        #print('=> '+ascii)
+        letter = most_frequent(matrix2[row])
+        mostLikelyLetters.append(letter)
+        print(letter)
+    else:
+        mostLikelyLetters.append(36)
 
 """ for row in range (0,82):
     if(not (matrix2[row])):
@@ -119,3 +125,10 @@ print(type(test))
 print(type(matrix[0][3]))
 print((matrix[0][3]))
 matrix[0][3] = 3 """
+
+for letter in mostLikelyLetters:
+    byte = bytes([letter])
+    byteToAscii = byte.decode('ascii')
+    print(byteToAscii, end=' ')
+print()
+print(ord(' '))
