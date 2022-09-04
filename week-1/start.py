@@ -1,4 +1,19 @@
-print("Hello")
+# The goal of this assignment is to show what happens when a one time pad key is used multiple times.
+
+# We have 11 different cypertexts, all encrypted with the one time pad using the same key. The goal is now to 
+# decrypt the target message.
+
+# - convert all hex strings to byte arrays otherwise we will have errors when performing xor
+# - bring all bytearrays to the length of the target message
+# - xor each array with the target message
+# - convert each xor to ascii readable text
+# - check for capital letters => in english we normally don't have capital letters, so that means, that the original messages each have to be a space and the small letter
+# - check for most frequent capital letter in each column => print them together 
+
+import enum
+
+
+print("Programming assignment I")
 
 
 cyphertext1 = "315c4eeaa8b5f8aaf9174145bf43e1784b8fa00dc71d885a804e5ee9fa40b16349c146fb778cdf2d3aff021dfff5b403b510d0d0455468aeb98622b137dae857553ccd8883a7bc37520e06e515d22c954eba5025b8cc57ee59418ce7dc6bc41556bdb36bbca3e8774301fbcaa3b83b220809560987815f65286764703de0f3d524400a19b159610b11ef3e"
@@ -14,33 +29,93 @@ cyphertext10 = "466d06ece998b7a2fb1d464fed2ced7641ddaa3cc31c9941cf110abbf409ed39
 
 targetCyphertext = "32510ba9babebbbefd001547a810e67149caee11d945cd7fc81a05e9f85aac650e9052ba6a8cd8257bf14d13e6f0a803b54fde9e77472dbff89d71b57bddef121336cb85ccb8f3315f4b52e301d16e9f52f904"
 
-cyperArray = [cyphertext1, cyphertext2, cyphertext3, cyphertext4, cyphertext5, cyphertext6, cyphertext7, cyphertext8, cyphertext9, cyphertext10 ]
-print(f'Characters of cypher {len(targetCyphertext)}')
-
-# all cyphers to one length 166
-
-print('len before:')
-for cypher in cyperArray:
-   print(len(cypher))
-
-for idx, cypher in enumerate(cyperArray):
-   cypher = cypher[:165]
-   cyperArray[idx] = cypher
-
-print('len after:')
-for cypher in cyperArray:
-   print(len(cypher)) 
-
-# XOR cypher with all other cyphers one by one
-targetCyphertext = int(targetCyphertext, 16)
-
-print("XOR")
-for cyper in cyperArray:
-    cyper = int(cyper, 16)
-    xor = cyper ^ targetCyphertext
-    print(chr(int(xor[:8], 2)))
+cypherArray = [cyphertext1, cyphertext2, cyphertext3, cyphertext4, cyphertext5, cyphertext6, cyphertext7, cyphertext8, cyphertext9, cyphertext10 ]
 
 
 
-# translate hex to letters
-# check for capital letters
+""" byte1 = bytes.fromhex(cyperArray[0])
+bytesTarget = bytes.fromhex(targetCyphertext)
+
+
+string = 'hello'
+byteString = bytearray(string, 'utf-8')
+
+byteString.decode('utf-8')
+
+bytesTarget.decode('ascii', 'ignore')
+ """
+
+# XOR two unequal strings of Raw Bytes
+def xor(a,b):
+    return bytes(x^y for x,y in zip(a,b))
+
+def most_frequent(List):
+    counter = 0
+    num = List[0]
+     
+    for i in List:
+        curr_frequency = List.count(i)
+        if(curr_frequency> counter):
+            counter = curr_frequency
+            num = i
+ 
+    return num
+
+# convert all to bytearrays
+targetCyphertext = bytes.fromhex(targetCyphertext)
+print(len(targetCyphertext))
+# cut all byte arrays to len 83
+for idx, cypher in enumerate(cypherArray):
+    cypherArray[idx] = bytes.fromhex(cypher)[0:83]
+
+matrix = []
+
+for cypher in cypherArray:
+    matrix.append(xor(cypher, targetCyphertext))
+
+test = matrix[0].decode('ascii', 'replace')
+
+
+for a, array in enumerate(matrix):
+    for b, byte in enumerate(array):
+        if (byte > 64 and byte < 91) :
+            print(byte, end=' ')
+        else:
+            print("*  ", end='')
+    print()
+
+
+matrix2 = [[]]
+
+for x in range(0, len(matrix[0])-1):
+    column = []
+    for y in range(0, len(matrix)-1):
+        if(matrix[y][x]>64 and matrix[y][x]< 91 ):
+            column.append(matrix[y][x])
+    matrix2.append(column)
+
+
+for row in range (0,82):
+    print(matrix2[row])
+    if(not (matrix2[row])):
+        ascii = matrix2[row].decode('ascii')
+        print('=> '+ascii)
+
+""" for row in range (0,82):
+    if(not (matrix2[row])):
+        print(f'true  {row}')
+        #print(most_frequent(matrix[row]), end=' ') """
+   
+#print(not (matrix2[3]))
+
+# xor each cypher with target cyper
+
+# align xor results in 2D array
+# check for each column which result is common one
+# print that result, with ascii igonre
+
+""" test = bytes([200])
+print(type(test))
+print(type(matrix[0][3]))
+print((matrix[0][3]))
+matrix[0][3] = 3 """
